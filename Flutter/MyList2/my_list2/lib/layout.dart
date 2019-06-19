@@ -1,18 +1,143 @@
 import 'package:flutter/material.dart';
+import 'models/Lista.dart';
+
+import 'pages/home.dart';
+import 'pages/about.dart';
+import 'pages/settings.dart';
 
 class Layout {
 
-  static Scaffold getContent(BuildContext context, content) {
+  static final pages = [
+    HomePage.tag,
+    AboutPage.tag,
+    SettingsPage.tag
+  ];
+
+  static int currItem = 0;
+
+  static Scaffold getContent(BuildContext context, content, [bool showbottom = true]) {
+
+    BottomNavigationBar bottomNavBar = BottomNavigationBar(
+      currentIndex: currItem,
+      fixedColor: primary(),
+      items: <BottomNavigationBarItem>[
+        BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
+        BottomNavigationBarItem(icon: Icon(Icons.question_answer), title: Text('Sobre')),
+        BottomNavigationBarItem(icon: Icon(Icons.settings), title: Text('Configurações'))
+      ],
+      onTap: (int i) {
+        currItem = i;
+        Navigator.of(context).pushReplacementNamed(pages[i]);
+      },
+    );
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(150, 150, 150, 1),
-        title: Center(
-          child: Text('MyList'),
-        ), // Center
-      ), // AppBar
+        backgroundColor: primary(),
+        title: Text('MyList'),
+        actions: showbottom ? _getActions(context) : [],
+      ),
+      bottomNavigationBar: showbottom ? bottomNavBar : null,
       body: content,
-    ); // Scaffold
-
+    );
   }
+
+  static List<Widget> _getActions(BuildContext context) {
+
+    List<Widget> items = List<Widget>();
+
+    GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    TextEditingController _c = TextEditingController();
+
+    if (pages[currItem] == HomePage.tag) {
+      items.add(
+        GestureDetector(
+          onTap: () {
+
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (BuildContext ctx) {
+
+                final input = Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: _c,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      hintText: 'Nome',
+                      contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)
+                      )
+                    ),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Este campo não pode ficar vazio';
+                      }
+                    },
+                  )
+                );
+
+                return AlertDialog(
+                  title: Text('Nova Lista'),
+                  content: SingleChildScrollView(
+                    child: ListBody(
+                      children: <Widget>[
+                        input
+                      ],
+                    ),
+                  ),
+                  actions: <Widget>[
+                    RaisedButton(
+                      color: secondary(),
+                      child: Text('Cancelar', style: TextStyle(color: Layout.light())),
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                      },
+                    ),
+                    RaisedButton(
+                      color: primary(),
+                      child: Text('Adicionar', style: TextStyle(color: Layout.light())),
+                      onPressed: () {
+                        
+                        if (_formKey.currentState.validate()) {
+                          ModelLista listaBo = ModelLista();
+
+                          listaBo.insert({
+                            'name': _c.text,
+                            'created': DateTime.now().toString()
+                          }).then((newRowId) {
+
+                            Navigator.of(ctx).pop();
+                            Navigator.of(ctx).pushReplacementNamed(HomePage.tag);
+
+                          });
+                        }
+                        
+                      },
+                    )
+                  ],
+                );
+              }
+            );
+          },
+          child: Icon(Icons.add),
+        )
+      );
+    }
+
+    items.add(Padding(padding: EdgeInsets.only(right: 20)));
+
+    return items;
+}
+
+  static Color primary([double opacity = 1]) => Color.fromRGBO(62, 63, 89, opacity);
+  static Color secondary([double opacity = 1]) => Color.fromRGBO(111, 168, 191, opacity);
+  static Color light([double opacity = 1]) => Color.fromRGBO(242, 234, 228, opacity);
+  static Color dark([double opacity = 1]) => Color.fromRGBO(51, 51, 51, opacity);
+  static Color danger([double opacity = 1]) => Color.fromRGBO(217, 74, 74, opacity);
+  static Color success([double opacity = 1]) => Color.fromRGBO(6, 166, 59, opacity);
+  static Color info([double opacity = 1]) => Color.fromRGBO(0, 122, 166, opacity);
+  static Color warning([double opacity = 1]) => Color.fromRGBO(166, 134, 0, opacity);
 }

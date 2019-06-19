@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:my_list2/layout.dart';
 
-class AboutPage extends StatelessWidget {
+class SettingsPage extends StatelessWidget {
 
-  static String tag = 'about-page';
+  static String tag = 'settings-page';
 
   @override
   Widget build(BuildContext context){
     return Layout.getContent(context, Center(
       child: Text(
-        'Este app foi criado por Luiz Eduardo e Ismael Ramos',
+        'Aqui vamos modificar coisas',
         style: TextStyle(color: Layout.dark()),
       ),
     ));
