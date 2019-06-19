@@ -1,4 +1,4 @@
-package com.example.my_list2;
+package br.com.luiz_eduardo.my_list2;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
