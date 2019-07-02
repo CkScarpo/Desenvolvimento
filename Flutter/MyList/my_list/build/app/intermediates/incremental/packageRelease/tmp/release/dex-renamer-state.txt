@@ -1,0 +1,4 @@
+#Mon Jul 01 18:00:39 BRT 2019
+base.0=D\:\\Android\\Desenvolvimento-master\\Flutter\\myapp\\build\\app\\intermediates\\transforms\\dexMerger\\release\\0
+path.0=classes.dex
+renamed.0=classes.dex
